@@ -1,0 +1,20 @@
+import time
+
+entity = {
+    "name": "TestSubject",
+    "energy": 100
+}
+
+while True:
+    print("\n--- Entity Status ---")
+    print("Name:", entity["name"])
+    print("Energy:", entity["energy"])
+
+    if entity["energy"] <= 0:
+        print("Entity has no energy and must rest.")
+        entity["energy"] = 100
+    else:
+        print("Entity performs an action.")
+        entity["energy"] -= 10
+
+    time.sleep(1)
