@@ -1,0 +1,33 @@
+import random
+
+
+def clamp(value: int, low: int = 0, high: int = 100) -> int:
+    return max(low, min(high, value))
+
+def biased_stat (low: int, high: int, mode: int) -> int:
+    #Most values cluster near mode; extremes are rarer
+    return int(random.triangular(low, high, mode))
+
+values = [biased_stat(-100, 100, 0) for _ in range(20)]
+print(values)
+
+npc = {
+    "identity": {
+        "first_name": "Zed",
+        "last_name": "walker",
+        "age": 33
+    },
+    "traits": {
+        "motivation": 65,
+        "morality": 0,
+        "smarts": 60
+    },
+    "physiology": {
+        "hunger": 10,
+        "bladder": 10,
+        "digestion_rate": 6,
+        "bladder_fill_rate": 5,
+        "bladder_capacity": 100 
+    }
+}
+
