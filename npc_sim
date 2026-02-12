@@ -31,7 +31,7 @@ NAME_POOLS = {
 }
 
 def name_sex_gen(sex: str) ->str:
-    return random.choice(NAME_POOLS[sex])
+    return rng.choice(NAME_POOLS[sex])
     
 
 def summary(npc):
@@ -46,24 +46,46 @@ def summary(npc):
     )
 
 def create_npc(npc_id): 
-    sex = random.choice(SEX_CHOICES)
-    
-    npc = {
-        "ID" : npc_id,
+    sex = rng.choice(SEX_CHOICES)
 
-        "identity": {
+    identity = {
             "sex": sex,
             "first_name": name_sex_gen(sex),
-            "last_name": random.choice(LAST_NAMES),
+            "last_name": rng.choice(LAST_NAMES),
             "age": biased_stat(18, 62, 30, rng)
-        },
-        "traits": {
+        }
+    traits = {
             "motivation": biased_stat(0, 100, 50, rng),
             "morality": biased_stat(-100, 100, 0, rng),
             "smarts": biased_stat(0, 100, 50, rng)
         }
-        
-    } 
+    body = {
+            "metabolism": biased_stat(50, 100, 50, rng),
+            "hydration_drive": biased_stat(50, 100, 75, rng),
+            "stomach_capacity": biased_stat(80, 120, 100, rng),
+            "bladder_capacity": biased_stat(80, 120, 100, rng),
+            "fitness": biased_stat(0, 100, 50, rng),
+        }
+    
+    start_contents = biased_stat(0, body["stomach_capacity"], body["stomach_capacity"] // 2, rng)
+
+    physiology =  {
+            "hunger": biased_stat(0, 50, 25, rng),
+            "digestion_rate" : 3 + body["metabolism"]//17,
+            "stomach_contents": start_contents,
+            "bladder": biased_stat(0, 50, 25, rng),
+            "bladder_fill_rate" : 2 + body['hydration_drive'] //20,
+            
+             
+            
+        }
+    npc = {
+        "ID" : npc_id,
+        "identity": identity,
+        "traits": traits,
+        "body": body,
+        "physiology": physiology
+        } 
     return npc
 
 def create_population(n) :
@@ -76,7 +98,10 @@ def create_population(n) :
 population = create_population(5)
 
 for npc in population:
-    print(npc["ID"], npc["identity"]["first_name"])
+    p = npc["physiology"]
+    b = npc["body"]
+    
+    print(npc["ID"], p["digestion_rate"], p["bladder_fill_rate"], b["metabolism"], b["hydration_drive"])
 
 
 
