@@ -1,33 +1,83 @@
 import random
 
+rng = random.Random(42)
 
 def clamp(value: int, low: int = 0, high: int = 100) -> int:
     return max(low, min(high, value))
 
-def biased_stat (low: int, high: int, mode: int) -> int:
+def biased_stat(low, high, mode, rng) -> int:
     #Most values cluster near mode; extremes are rarer
-    return int(random.triangular(low, high, mode))
+    return int(rng.triangular(low, high, mode))
 
-values = [biased_stat(-100, 100, 0) for _ in range(20)]
-print(values)
+SEX_CHOICES = [
+    "Male", "Female"
+]
 
-npc = {
-    "identity": {
-        "first_name": "Zed",
-        "last_name": "walker",
-        "age": 33
-    },
-    "traits": {
-        "motivation": 65,
-        "morality": 0,
-        "smarts": 60
-    },
-    "physiology": {
-        "hunger": 10,
-        "bladder": 10,
-        "digestion_rate": 6,
-        "bladder_fill_rate": 5,
-        "bladder_capacity": 100 
-    }
+FIRST_MALE_NAMES = [
+    "Zed", "John", "Charles", "Steve", "Jacob", "Noah", "Ethan"
+]
+
+FIRST_FEMALE_NAMES = [
+    "Kristy", "Karen", "Joan", "Missy", "Zoe", "Ashley", "Brittany"
+]
+
+LAST_NAMES = [
+    "Jacobs", "Smith", "Walker", "Reed", "Khan", "Turner", "Morris"
+]
+
+NAME_POOLS = {
+    "Male":FIRST_MALE_NAMES,
+    "Female":FIRST_FEMALE_NAMES,
 }
+
+def name_sex_gen(sex: str) ->str:
+    return random.choice(NAME_POOLS[sex])
+    
+
+def summary(npc):
+    i = npc["identity"]
+    t = npc["traits"]
+    return (
+        f"{i['first_name']} {i['last_name']}\n" 
+        f"Sex:{i['sex']}, Age:{i['age']}\n"
+        f"{'Mot:':<8}{t['motivation']:>3}\n"
+        f"{'Mor:':<8}{t['morality']:>3}\n"
+        f"{'Smarts:':<8}{t['smarts']:>3}\n"
+    )
+
+def create_npc(npc_id): 
+    sex = random.choice(SEX_CHOICES)
+    
+    npc = {
+        "ID" : npc_id,
+
+        "identity": {
+            "sex": sex,
+            "first_name": name_sex_gen(sex),
+            "last_name": random.choice(LAST_NAMES),
+            "age": biased_stat(18, 62, 30, rng)
+        },
+        "traits": {
+            "motivation": biased_stat(0, 100, 50, rng),
+            "morality": biased_stat(-100, 100, 0, rng),
+            "smarts": biased_stat(0, 100, 50, rng)
+        }
+        
+    } 
+    return npc
+
+def create_population(n) :
+    population = []
+    for i in range(n):
+        npc=create_npc(i)
+        population.append(npc)
+    return population
+
+population = create_population(5)
+
+for npc in population:
+    print(npc["ID"], npc["identity"]["first_name"])
+
+
+
 
